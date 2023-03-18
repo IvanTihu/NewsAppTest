@@ -6,10 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapptest.R
-import com.example.newsapptest.databinding.FragmentDetailsBinding
 import com.example.newsapptest.databinding.FragmentMainBinding
 import com.example.newsapptest.ui.adapters.NewsAdapter
 import com.example.newsapptest.utils.Resource
@@ -36,8 +37,17 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initAdapter()
+
+        newsAdapter.setItemClickListener {
+            val bundle = bundleOf("article" to it)
+            findNavController().navigate(
+                R.id.action_mainFragment_to_detailsFragment,
+                bundle
+            )
+        }
+
         viewModel.newsLiveData.observe(viewLifecycleOwner) { response ->
-            when(response) {
+            when (response) {
                 is Resource.Success -> {
                     binding.pagProgressBar.visibility = View.INVISIBLE
                     response.data?.let {
